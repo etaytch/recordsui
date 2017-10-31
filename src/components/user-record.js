@@ -1,65 +1,65 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-import { ROOT_URL } from '../actions/index';
-import { API_RECORDS } from '../actions/index';
+
+import { Field, reduxForm } from 'redux-form';
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { createRecord } from '../actions';
 
 
 class UserRecord extends Component {
-    constructor(props) {
-        super(props);
-        
-        this.state = {
-            record: "",
-        };
-        
-        this.handleRecord = this.handleRecord.bind(this);
-    }
-
-    handleRecord(event) {
-        this.setState({ record: event.target.value
-                      });
-    }
-
-    addToView = event => {
-        event.preventDefault();
-        this.setState({
-            record: event.target.value
-        });
-        
-        axios.post(`${ROOT_URL}${API_RECORDS}`, {
-            record: this.state.record
-        })
-            .then(response => {
-            console.log(response, 'Record added!');
-        })
-            .catch(err => {
-            console.log(err, 'Record not added, try again');
-        });
-
-        this.setState({
-            record: ""
-        });
-    };
-
-    render() {
+    renderField(field) {
+        const { meta: { touched, error }} = field;
+        const className = `form-group ${ touched && error ? 'has-danger' : ''}`;
         return (
-            <div>
+            <div className={className}>
+                <label>{field.label}</label>
                 <input
-                    onChange={this.handleRecord}
-                    name="UserRecord"
-                    value={this.state.Records}
-                    placeholder="Enter the record"
+                    className="form-control"
+                    type="text"
+                    {...field.input}
                 />
-                <button
-                type="submit"
-                onClick={this.addToView}
-                >
-                Submit Record<i aria-hidden="true" />
-                </button>
+                <div className="text-help">
+                    {touched ? error : ''}
+                </div>
             </div>
         );
     }
-        
+
+    onSubmit(values) {
+        this.props.createRecord(values, () => {
+            this.props.history.push('/');
+        });
+    }
+
+    render() {
+        const { handleSubmit } = this.props;
+        return (
+            <form onSubmit={handleSubmit(this.onSubmit.bind(this))}>
+            <Field
+                label="Enter record:"
+                name="record"
+                component={this.renderField}
+            />
+         
+            <button type="submit" className="btn btn-primary">Submit</button>
+            </form>
+        );
+    }
 }
 
-export default UserRecord;
+function validate(values) {
+    const errors = {};
+
+    if(!values.record) {
+        errors.record = "Enter a record!";
+    }
+
+    return errors;
+}
+
+export default reduxForm({
+    validate,
+    form: 'UserRecordForm'
+})(
+    connect(null, { createRecord })(UserRecord)
+);

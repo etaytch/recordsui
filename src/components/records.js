@@ -22,7 +22,7 @@ class Records extends Component {
          
     render() {
             return (
-                <div className="">
+                <div className="title-records">
                     <h2>Records:</h2>
                 {this.renderRecords()}
                 </div>

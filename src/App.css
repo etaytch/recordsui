@@ -26,3 +26,26 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+li {
+    width: 400px;
+}
+
+.form-group,
+.btn-primary{
+    margin-left: 40px;
+    margin-right: 40px;
+}
+
+.form-group {
+    width: 400px;
+}
+
+form {
+    margin-top: 10px;
+    margin-bottom: 40px;
+}
+
+.title-records {
+    margin: auto 40px;
+}
